@@ -1,5 +1,5 @@
 import BaseDTO from "../Utils/BaseDTO";
-import UserEntity from "../../Domain/Entities/User/UserEntity";
+import UserEntity from "../../Domain/User/UserEntity";
 
 class UpdateUserDTO extends BaseDTO {
   public user: UserEntity;
@@ -9,7 +9,7 @@ class UpdateUserDTO extends BaseDTO {
     this.allowedRoles = []
     const params = request.body;
     params.userId = request.params.userId
-    this.user = UserEntity.createFromInput(params)
+    this.user = UserEntity.create(params)
   }
 }
 

@@ -1,22 +1,26 @@
-import * as Logger from "bunyan";
-import config from "../Config"
+import pino from "pino";
+import {IAppLogger} from "../../Application/IAppLogger";
 
-const log = Logger.createLogger({
-  name: config.application.APP_NAME,
-  streams: [
-    {
-      level: 'info',
-      stream: process.stdout,
-    },
-    {
-      level: 'debug',
-      stream: process.stdout,
-    },
-    {
-      level: 'error',
-      stream: process.stdout,
-    },
-  ],
-});
+const pinoLogger = pino();
 
-export default log;
+class AppLogger implements IAppLogger {
+  error(message: string): void {
+    pinoLogger.error(message);
+  }
+
+  warn(message: string): void {
+    pinoLogger.warn(message);
+  }
+
+  debug(message: string): void {
+    pinoLogger.info(message);
+  }
+
+  info(message: string): void {
+    pinoLogger.info(message);
+  }
+}
+
+export default new AppLogger();
+
+

@@ -1,14 +1,14 @@
 import {inject, injectable} from "tsyringe";
-import {IProfileRepository} from "../../Domain/Entities/Profile/IProfileRepository";
+import {IProfileRepository} from "../../Domain/Profile/IProfileRepository";
 import HttpResp from "../Utils/HttpResp";
 import HttpStatusCode from "../Utils/HttpStatusCode";
-import PaginationData from "../../Infrastructure/Utils/PaginationData";
+import PaginatedData from "../../Domain/Utils/PaginatedData";
 import CreateProfileDTO from "./CreateProfileDTO";
 import FetchAllProfilesDTO from "./FetchAllProfilesDTO";
 import UpdateProfileDTO from "./UpdateProfileDTO";
 import FetchProfileByIdDTO from "./FetchProfileByIdDTO";
 import RemoveProfileDTO from "./RemoveProfileDTO";
-import ProfileEntity from "../../Domain/Entities/Profile/ProfileEntity";
+import ProfileEntity from "../../Domain/Profile/ProfileEntity";
 
 @injectable()
 class ProfileService {
@@ -20,7 +20,7 @@ class ProfileService {
       createProfileDTO.hasAccess();
       const profile: ProfileEntity = createProfileDTO.profile;
       await this.profileRepository.addProfile(profile.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", message: "Profile created successfully"});
+      return HttpResp.create(HttpStatusCode.OK, {message: "Profile created successfully"});
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -30,8 +30,8 @@ class ProfileService {
     try {
       const {paginationOptions} = fetchAllProfilesDTO;
       fetchAllProfilesDTO.hasAccess();
-      const response: PaginationData<ProfileEntity> = await this.profileRepository.fetchAllProfiles(paginationOptions);
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", data: response.getPaginatedData()})
+      const response: PaginatedData<ProfileEntity> = await this.profileRepository.fetchAllProfiles(paginationOptions);
+      return HttpResp.create(HttpStatusCode.OK, {data: response.getPaginatedData()})
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -42,7 +42,7 @@ class ProfileService {
       updateProfileDTO.hasAccess();
       const profile: ProfileEntity = updateProfileDTO.profile;
       await this.profileRepository.update(profile.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", message: "Profile updated successfully"});
+      return HttpResp.create(HttpStatusCode.OK, {message: "Profile updated successfully"});
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -53,7 +53,7 @@ class ProfileService {
       const {profileId} = fetchProfileByIdDTO;
       fetchProfileByIdDTO.hasAccess();
       const response: ProfileEntity = await this.profileRepository.fetchById(profileId);
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", data: response});
+      return HttpResp.create(HttpStatusCode.OK, {data: response});
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -63,7 +63,7 @@ class ProfileService {
     try {
       removeProfileDTO.hasAccess();
       await this.profileRepository.remove(removeProfileDTO.profileId);
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", message: "Profile deleted Successfully"})
+      return HttpResp.create(HttpStatusCode.OK, {message: "Profile deleted Successfully"})
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message})
     }

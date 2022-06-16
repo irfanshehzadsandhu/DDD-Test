@@ -1,5 +1,5 @@
 import BaseDTO from "../Utils/BaseDTO";
-import ProfileEntity from "../../Domain/Entities/Profile/ProfileEntity";
+import ProfileEntity from "../../Domain/Profile/ProfileEntity";
 
 class UpdateProfileDTO extends BaseDTO {
   public profile: ProfileEntity;
@@ -9,7 +9,7 @@ class UpdateProfileDTO extends BaseDTO {
     this.allowedRoles = []
     const params = request.body;
     params.profileId = request.params.profileId
-    this.profile = ProfileEntity.createFromInput(params)
+    this.profile = ProfileEntity.create(params)
   }
 }
 

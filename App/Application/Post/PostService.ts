@@ -1,15 +1,14 @@
 import {inject, injectable} from "tsyringe";
-import {IPostRepository} from "../../Domain/Entities/Post/IPostRepository";
+import {IPostRepository} from "../../Domain/Post/IPostRepository";
 import HttpResp from "../Utils/HttpResp";
 import HttpStatusCode from "../Utils/HttpStatusCode";
-import PaginationData from "../../Infrastructure/Utils/PaginationData";
+import PaginatedData from "../../Domain/Utils/PaginatedData";
 import CreatePostDTO from "./CreatePostDTO";
 import FetchAllPostsDTO from "./FetchAllPostsDTO";
 import UpdatePostDTO from "./UpdatePostDTO";
 import FetchPostByIdDTO from "./FetchPostByIdDTO";
 import RemovePostDTO from "./RemovePostDTO";
-import PostEntity from "../../Domain/Entities/Post/PostEntity";
-
+import PostEntity from "../../Domain/Post/PostEntity";
 
 @injectable()
 class PostService {
@@ -21,7 +20,7 @@ class PostService {
       createPostDTO.hasAccess();
       const post: PostEntity = createPostDTO.post;
       await this.postRepository.addPost(post.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", message: "Post created successfully"});
+      return HttpResp.create(HttpStatusCode.OK, {message: "Post created successfully"});
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -31,8 +30,8 @@ class PostService {
     try {
       const {paginationOptions} = fetchAllPostsDTO;
       fetchAllPostsDTO.hasAccess();
-      const response: PaginationData<PostEntity> = await this.postRepository.fetchAllPosts(paginationOptions);
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", data: response.getPaginatedData()})
+      const response: PaginatedData<PostEntity> = await this.postRepository.fetchAllPosts(paginationOptions);
+      return HttpResp.create(HttpStatusCode.OK, {data: response.getPaginatedData()})
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -43,7 +42,7 @@ class PostService {
       updatePostDTO.hasAccess();
       const post: PostEntity = updatePostDTO.post;
       await this.postRepository.update(post.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", message: "Post updated successfully"});
+      return HttpResp.create(HttpStatusCode.OK, {message: "Post updated successfully"});
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -54,7 +53,7 @@ class PostService {
       const {postId} = fetchPostByIdDTO;
       fetchPostByIdDTO.hasAccess();
       const response: PostEntity = await this.postRepository.fetchById(postId);
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", data: response});
+      return HttpResp.create(HttpStatusCode.OK, {data: response});
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -64,7 +63,7 @@ class PostService {
     try {
       removePostDTO.hasAccess();
       await this.postRepository.remove(removePostDTO.postId);
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", message: "Post deleted Successfully"})
+      return HttpResp.create(HttpStatusCode.OK, {message: "Post deleted Successfully"})
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message})
     }

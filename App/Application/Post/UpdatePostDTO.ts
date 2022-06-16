@@ -1,5 +1,5 @@
 import BaseDTO from "../Utils/BaseDTO";
-import PostEntity from "../../Domain/Entities/Post/PostEntity";
+import PostEntity from "../../Domain/Post/PostEntity";
 
 class UpdatePostDTO extends BaseDTO {
   public post: PostEntity;
@@ -9,7 +9,7 @@ class UpdatePostDTO extends BaseDTO {
     this.allowedRoles = []
     const params = request.body;
     params.postId = request.params.postId
-    this.post = PostEntity.createFromInput(params)
+    this.post = PostEntity.create(params)
   }
 }
 

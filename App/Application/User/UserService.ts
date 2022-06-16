@@ -1,15 +1,14 @@
 import {inject, injectable} from "tsyringe";
-import {IUserRepository} from "../../Domain/Entities/User/IUserRepository";
+import {IUserRepository} from "../../Domain/User/IUserRepository";
 import HttpResp from "../Utils/HttpResp";
 import HttpStatusCode from "../Utils/HttpStatusCode";
-import PaginationData from "../../Infrastructure/Utils/PaginationData";
+import PaginatedData from "../../Domain/Utils/PaginatedData";
 import CreateUserDTO from "./CreateUserDTO";
 import FetchAllUsersDTO from "./FetchAllUsersDTO";
 import UpdateUserDTO from "./UpdateUserDTO";
 import FetchUserByIdDTO from "./FetchUserByIdDTO";
 import RemoveUserDTO from "./RemoveUserDTO";
-import UserEntity from "../../Domain/Entities/User/UserEntity";
-import UserRepository from "../../Infrastructure/MySQLRepository/UserRepository";
+import UserEntity from "../../Domain/User/UserEntity";
 
 @injectable()
 class UserService {
@@ -21,7 +20,7 @@ class UserService {
       createUserDTO.hasAccess();
       const user: UserEntity = createUserDTO.user;
       await this.userRepository.addUser(user.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", message: "User created successfully"});
+      return HttpResp.create(HttpStatusCode.OK, {message: "User created successfully"});
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -31,8 +30,8 @@ class UserService {
     try {
       const {paginationOptions} = fetchAllUsersDTO;
       fetchAllUsersDTO.hasAccess();
-      const response: PaginationData<UserEntity> = await this.userRepository.fetchAllUsers(paginationOptions);
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", data: response.getPaginatedData()})
+      const response: PaginatedData<UserEntity> = await this.userRepository.fetchAllUsers(paginationOptions);
+      return HttpResp.create(HttpStatusCode.OK, {data: response.getPaginatedData()})
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -43,7 +42,7 @@ class UserService {
       updateUserDTO.hasAccess();
       const user: UserEntity = updateUserDTO.user;
       await this.userRepository.update(user.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", message: "User updated successfully"});
+      return HttpResp.create(HttpStatusCode.OK, {message: "User updated successfully"});
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -54,7 +53,7 @@ class UserService {
       const {userId} = fetchUserByIdDTO;
       fetchUserByIdDTO.hasAccess();
       const response: UserEntity = await this.userRepository.fetchById(userId);
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", data: response});
+      return HttpResp.create(HttpStatusCode.OK, {data: response});
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
     }
@@ -64,7 +63,7 @@ class UserService {
     try {
       removeUserDTO.hasAccess();
       await this.userRepository.remove(removeUserDTO.userId);
-      return HttpResp.create(HttpStatusCode.OK, {status: "success", message: "User deleted Successfully"})
+      return HttpResp.create(HttpStatusCode.OK, {message: "User deleted Successfully"})
     } catch (err) {
       return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message})
     }

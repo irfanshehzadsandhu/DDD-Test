@@ -1,4 +1,4 @@
-import AppError from "../../HTTP/Errors/AppError";
+import AppError from "../../../HTTP/Errors/AppError";
 
 class BaseDTO {
   //public role: RoleType;

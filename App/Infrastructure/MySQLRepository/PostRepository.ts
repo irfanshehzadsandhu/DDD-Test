@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient();
-import PostEntity from "../../Domain/Entities/Post/PostEntity";
-import PaginationData from "../Utils/PaginationData";
-import {IPostRepository} from "../../Domain/Entities/Post/IPostRepository";
+import PostEntity from "../../Domain/Post/PostEntity";
+import PaginatedData from "../../Domain/Utils/PaginatedData";
+import {IPostRepository} from "../../Domain/Post/IPostRepository";
 import {injectable} from "tsyringe";
 
 const Post = prisma.post;
@@ -16,18 +16,18 @@ class PostRepository implements IPostRepository {
     });
   }
 
-  async fetchAllPosts(paginationOptions): Promise<PaginationData<PostEntity>> {
+  async fetchAllPosts(paginationOptions): Promise<PaginatedData<PostEntity>> {
     const count = await Post.count();
     const postObjs = await Post.findMany({
       skip: paginationOptions.offset(),
       take: paginationOptions.limit(),
     })
-    const paginationData: PaginationData<PostEntity> = new PaginationData<PostEntity>(paginationOptions, count)
+    const paginatedData: PaginatedData<PostEntity> = new PaginatedData<PostEntity>(paginationOptions, count)
     postObjs.forEach(postObj => {
-      const post = PostEntity.createFromDb(postObj);
-      paginationData.addItem(post)
+      const post = PostEntity.create(postObj);
+      paginatedData.addItem(post)
     });
-    return paginationData;
+    return paginatedData;
   }
 
   async fetchById(postId: string): Promise<any> {
@@ -39,7 +39,7 @@ class PostRepository implements IPostRepository {
     if (!postObj) {
       throw new Error("Invalid Post details");
     }
-    return PostEntity.createFromDb(postObj);
+    return PostEntity.create(postObj);
   }
 
   async update(post: PostEntity): Promise<void> {

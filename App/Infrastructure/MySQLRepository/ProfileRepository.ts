@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient();
-import ProfileEntity from "../../Domain/Entities/Profile/ProfileEntity";
-import PaginationData from "../Utils/PaginationData";
-import {IProfileRepository} from "../../Domain/Entities/Profile/IProfileRepository";
+import ProfileEntity from "../../Domain/Profile/ProfileEntity";
+import PaginatedData from "../../Domain/Utils/PaginatedData";
+import {IProfileRepository} from "../../Domain/Profile/IProfileRepository";
 import {injectable} from "tsyringe";
 
 const Profile = prisma.profile;
@@ -16,18 +16,18 @@ class ProfileRepository implements IProfileRepository {
     });
   }
 
-  async fetchAllProfiles(paginationOptions): Promise<PaginationData<ProfileEntity>> {
+  async fetchAllProfiles(paginationOptions): Promise<PaginatedData<ProfileEntity>> {
     const count = await Profile.count();
     const profileObjs = await Profile.findMany({
       skip: paginationOptions.offset(),
       take: paginationOptions.limit(),
     })
-    const paginationData: PaginationData<ProfileEntity> = new PaginationData<ProfileEntity>(paginationOptions, count)
+    const paginatedData: PaginatedData<ProfileEntity> = new PaginatedData<ProfileEntity>(paginationOptions, count)
     profileObjs.forEach(profileObj => {
-      const profile = ProfileEntity.createFromDb(profileObj);
-      paginationData.addItem(profile)
+      const profile = ProfileEntity.create(profileObj);
+      paginatedData.addItem(profile)
     });
-    return paginationData;
+    return paginatedData;
   }
 
   async fetchById(profileId: string): Promise<any> {
@@ -39,7 +39,7 @@ class ProfileRepository implements IProfileRepository {
     if (!profileObj) {
       throw new Error("Invalid Profile details");
     }
-    return ProfileEntity.createFromDb(profileObj);
+    return ProfileEntity.create(profileObj);
   }
 
   async update(profile: ProfileEntity): Promise<void> {

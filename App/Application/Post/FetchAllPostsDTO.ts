@@ -1,5 +1,5 @@
 import BaseDTO from "../Utils/BaseDTO";
-import PaginationOptions from "../../Infrastructure/Utils/PaginationOptions";
+import PaginationOptions from "../../Domain/Utils/PaginationOptions";
 
 class FetchAllPostsDTO extends BaseDTO {
   private readonly page: number = 1;

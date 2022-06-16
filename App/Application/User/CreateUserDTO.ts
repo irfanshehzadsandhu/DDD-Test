@@ -1,5 +1,5 @@
 import BaseDTO from "../Utils/BaseDTO";
-import UserEntity from "../../Domain/Entities/User/UserEntity";
+import UserEntity from "../../Domain/User/UserEntity";
 
 class CreateUserDTO extends BaseDTO {
   public userId: string;
@@ -10,7 +10,7 @@ class CreateUserDTO extends BaseDTO {
     this.allowedRoles = []
     const params = request.body;
     params.userId = UserEntity.generateId();
-    this.user = UserEntity.createFromInput(params);
+    this.user = UserEntity.create(params);
   }
 
 }

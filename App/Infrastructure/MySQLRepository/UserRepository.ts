@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient();
-import UserEntity from "../../Domain/Entities/User/UserEntity";
-import PaginationData from "../Utils/PaginationData";
-import {IUserRepository} from "../../Domain/Entities/User/IUserRepository";
-import { injectable} from "tsyringe";
+import UserEntity from "../../Domain/User/UserEntity";
+import PaginatedData from "../../Domain/Utils/PaginatedData";
+import {IUserRepository} from "../../Domain/User/IUserRepository";
+import {injectable} from "tsyringe";
 
 const User = prisma.user;
 
@@ -16,18 +16,18 @@ class UserRepository implements IUserRepository {
     });
   }
 
-  async fetchAllUsers(paginationOptions): Promise<PaginationData<UserEntity>> {
+  async fetchAllUsers(paginationOptions): Promise<PaginatedData<UserEntity>> {
     const count = await User.count();
     const userObjs = await User.findMany({
       skip: paginationOptions.offset(),
       take: paginationOptions.limit(),
     })
-    const paginationData: PaginationData<UserEntity> = new PaginationData<UserEntity>(paginationOptions, count)
+    const paginatedData: PaginatedData<UserEntity> = new PaginatedData<UserEntity>(paginationOptions, count)
     userObjs.forEach(userObj => {
-      const user = UserEntity.createFromDb(userObj);
-      paginationData.addItem(user)
+      const user = UserEntity.create(userObj);
+      paginatedData.addItem(user)
     });
-    return paginationData;
+    return paginatedData;
   }
 
   async fetchById(userId: string): Promise<any> {
@@ -39,7 +39,7 @@ class UserRepository implements IUserRepository {
     if (!userObj) {
       throw new Error("Invalid User details");
     }
-    return UserEntity.createFromDb(userObj);
+    return UserEntity.create(userObj);
   }
 
   async update(user: UserEntity): Promise<void> {
@@ -59,5 +59,6 @@ class UserRepository implements IUserRepository {
   }
 
 }
+
 export default UserRepository;
 

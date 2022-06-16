@@ -1,19 +1,24 @@
 import {container} from "tsyringe";
-import {IUserRepository} from "../../Domain/Entities/User/IUserRepository";
-import UserRepository from "../MySQLRepository/UserRepository";
-import UserService from "../../Application/User/UserService";
-import {IPostRepository} from "../../Domain/Entities/Post/IPostRepository";
-import PostRepository from "../MySQLRepository/PostRepository";
-import {IProfileRepository} from "../../Domain/Entities/Profile/IProfileRepository";
+//interface
+import {IProfileRepository} from "../../Domain/Profile/IProfileRepository";
+import {IPostRepository} from "../../Domain/Post/IPostRepository";
+import {IUserRepository} from "../../Domain/User/IUserRepository";
+//component
 import ProfileRepository from "../MySQLRepository/ProfileRepository";
-import PostService from "../../Application/Post/PostService";
+import PostRepository from "../MySQLRepository/PostRepository";
+import UserRepository from "../MySQLRepository/UserRepository";
+//utilizer
 import ProfileService from "../../Application/Profile/ProfileService";
+import PostService from "../../Application/Post/PostService";
+import UserService from "../../Application/User/UserService";
 
-container.registerSingleton<IUserRepository>('UserRepository', UserRepository);
-container.registerSingleton<IPostRepository>('PostRepository', PostRepository);
+//i-binding
 container.registerSingleton<IProfileRepository>('ProfileRepository', ProfileRepository);
-container.registerSingleton<UserService>('UserService', UserService);
-container.registerSingleton<PostService>('PostService', PostService);
+container.registerSingleton<IPostRepository>('PostRepository', PostRepository);
+container.registerSingleton<IUserRepository>('UserRepository', UserRepository);
+//s-binding
 container.registerSingleton<ProfileService>('ProfileService', ProfileService);
+container.registerSingleton<PostService>('PostService', PostService);
+container.registerSingleton<UserService>('UserService', UserService);
 
-export default container
+export default container;
