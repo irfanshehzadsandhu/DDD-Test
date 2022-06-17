@@ -1,17 +1,13 @@
-import AppError from "../../../HTTP/Errors/AppError";
+import BaseDTOInterface from "./BaseDTOInterface";
 
-class BaseDTO {
-  //public role: RoleType;
-  //public allowedRoles: Array<RoleType> = [Roles.SuperAdmin];
+class BaseDTO implements BaseDTOInterface {
   public allowedRoles = []
+
   constructor(request) {
-    //this.role = request.user ? request.user.role : '';
   }
 
   hasAccess() {
-    // if (!this.allowedRoles.includes(this.role)) {
-    //   throw new AppError("You are not authorized to perform this action.", 400);
-    // }
+
   }
 
 }

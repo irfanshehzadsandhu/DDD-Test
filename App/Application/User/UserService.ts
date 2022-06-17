@@ -1,7 +1,6 @@
 import {inject, injectable} from "tsyringe";
 import {IUserRepository} from "../../Domain/User/IUserRepository";
-import HttpResp from "../Utils/HttpResp";
-import HttpStatusCode from "../Utils/HttpStatusCode";
+import AppResult from "../Utils/AppResult";
 import PaginatedData from "../../Domain/Utils/PaginatedData";
 import CreateUserDTO from "./CreateUserDTO";
 import FetchAllUsersDTO from "./FetchAllUsersDTO";
@@ -15,57 +14,57 @@ class UserService {
   constructor(@inject("UserRepository") private userRepository: IUserRepository) {
   }
 
-  async createUser(createUserDTO: CreateUserDTO): Promise<HttpResp> {
+  async createUser(createUserDTO: CreateUserDTO): Promise<AppResult> {
     try {
       createUserDTO.hasAccess();
       const user: UserEntity = createUserDTO.user;
       await this.userRepository.addUser(user.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {message: "User created successfully"});
+      return AppResult.success({message: "User created successfully"});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async fetchAllUsers(fetchAllUsersDTO: FetchAllUsersDTO): Promise<HttpResp> {
+  async fetchAllUsers(fetchAllUsersDTO: FetchAllUsersDTO): Promise<AppResult> {
     try {
       const {paginationOptions} = fetchAllUsersDTO;
       fetchAllUsersDTO.hasAccess();
       const response: PaginatedData<UserEntity> = await this.userRepository.fetchAllUsers(paginationOptions);
-      return HttpResp.create(HttpStatusCode.OK, {data: response.getPaginatedData()})
+      return AppResult.success({data: response.getPaginatedData()})
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async updateUser(updateUserDTO: UpdateUserDTO): Promise<HttpResp> {
+  async updateUser(updateUserDTO: UpdateUserDTO): Promise<AppResult> {
     try {
       updateUserDTO.hasAccess();
       const user: UserEntity = updateUserDTO.user;
       await this.userRepository.update(user.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {message: "User updated successfully"});
+      return AppResult.success({message: "User updated successfully"});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async fetchUserById(fetchUserByIdDTO: FetchUserByIdDTO): Promise<HttpResp> {
+  async fetchUserById(fetchUserByIdDTO: FetchUserByIdDTO): Promise<AppResult> {
     try {
       const {userId} = fetchUserByIdDTO;
       fetchUserByIdDTO.hasAccess();
       const response: UserEntity = await this.userRepository.fetchById(userId);
-      return HttpResp.create(HttpStatusCode.OK, {data: response});
+      return AppResult.success({data: response});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async removeUser(removeUserDTO: RemoveUserDTO): Promise<HttpResp> {
+  async removeUser(removeUserDTO: RemoveUserDTO): Promise<AppResult> {
     try {
       removeUserDTO.hasAccess();
       await this.userRepository.remove(removeUserDTO.userId);
-      return HttpResp.create(HttpStatusCode.OK, {message: "User deleted Successfully"})
+      return AppResult.success({message: "User deleted Successfully"})
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message})
+      return AppResult.fail(err.message)
     }
   }
 }
