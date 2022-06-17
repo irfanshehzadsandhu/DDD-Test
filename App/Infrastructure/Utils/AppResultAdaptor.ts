@@ -1,8 +1,7 @@
 import AppResult from "../../Application/Utils/AppResult";
 import HttpResp from "../../Application/Utils/HttpResp";
-import AppResultAdaptorInterface from "./AppResultAdaptorInterface";
 
-class AppResultAdaptor implements AppResultAdaptorInterface {
+class AppResultAdaptor {
   public appResult: AppResult;
 
   protected constructor(appResult: AppResult) {
