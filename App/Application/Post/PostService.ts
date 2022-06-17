@@ -1,7 +1,6 @@
 import {inject, injectable} from "tsyringe";
 import {IPostRepository} from "../../Domain/Post/IPostRepository";
-import HttpResp from "../Utils/HttpResp";
-import HttpStatusCode from "../Utils/HttpStatusCode";
+import AppResult from "../Utils/AppResult";
 import PaginatedData from "../../Domain/Utils/PaginatedData";
 import CreatePostDTO from "./CreatePostDTO";
 import FetchAllPostsDTO from "./FetchAllPostsDTO";
@@ -15,57 +14,57 @@ class PostService {
   constructor(@inject("PostRepository") private postRepository: IPostRepository) {
   }
 
-  async createPost(createPostDTO: CreatePostDTO): Promise<HttpResp> {
+  async createPost(createPostDTO: CreatePostDTO): Promise<AppResult> {
     try {
       createPostDTO.hasAccess();
       const post: PostEntity = createPostDTO.post;
       await this.postRepository.addPost(post.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {message: "Post created successfully"});
+      return AppResult.success({message: "Post created successfully"});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async fetchAllPosts(fetchAllPostsDTO: FetchAllPostsDTO): Promise<HttpResp> {
+  async fetchAllPosts(fetchAllPostsDTO: FetchAllPostsDTO): Promise<AppResult> {
     try {
       const {paginationOptions} = fetchAllPostsDTO;
       fetchAllPostsDTO.hasAccess();
       const response: PaginatedData<PostEntity> = await this.postRepository.fetchAllPosts(paginationOptions);
-      return HttpResp.create(HttpStatusCode.OK, {data: response.getPaginatedData()})
+      return AppResult.success({data: response.getPaginatedData()});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async updatePost(updatePostDTO: UpdatePostDTO): Promise<HttpResp> {
+  async updatePost(updatePostDTO: UpdatePostDTO): Promise<AppResult> {
     try {
       updatePostDTO.hasAccess();
       const post: PostEntity = updatePostDTO.post;
       await this.postRepository.update(post.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {message: "Post updated successfully"});
+      return AppResult.success({message: "Post updated successfully"});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async fetchPostById(fetchPostByIdDTO: FetchPostByIdDTO): Promise<HttpResp> {
+  async fetchPostById(fetchPostByIdDTO: FetchPostByIdDTO): Promise<AppResult> {
     try {
       const {postId} = fetchPostByIdDTO;
       fetchPostByIdDTO.hasAccess();
       const response: PostEntity = await this.postRepository.fetchById(postId);
-      return HttpResp.create(HttpStatusCode.OK, {data: response});
+      return AppResult.success({data: response});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async removePost(removePostDTO: RemovePostDTO): Promise<HttpResp> {
+  async removePost(removePostDTO: RemovePostDTO): Promise<AppResult> {
     try {
       removePostDTO.hasAccess();
       await this.postRepository.remove(removePostDTO.postId);
-      return HttpResp.create(HttpStatusCode.OK, {message: "Post deleted Successfully"})
+      return AppResult.success({message: "Post deleted Successfully"})
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message})
+      return AppResult.fail(err.message);
     }
   }
 }

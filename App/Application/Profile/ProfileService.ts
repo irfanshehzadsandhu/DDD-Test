@@ -1,7 +1,6 @@
 import {inject, injectable} from "tsyringe";
 import {IProfileRepository} from "../../Domain/Profile/IProfileRepository";
-import HttpResp from "../Utils/HttpResp";
-import HttpStatusCode from "../Utils/HttpStatusCode";
+import AppResult from "../Utils/AppResult";
 import PaginatedData from "../../Domain/Utils/PaginatedData";
 import CreateProfileDTO from "./CreateProfileDTO";
 import FetchAllProfilesDTO from "./FetchAllProfilesDTO";
@@ -15,57 +14,57 @@ class ProfileService {
   constructor(@inject("ProfileRepository") private profileRepository: IProfileRepository) {
   }
 
-  async createProfile(createProfileDTO: CreateProfileDTO): Promise<HttpResp> {
+  async createProfile(createProfileDTO: CreateProfileDTO): Promise<AppResult> {
     try {
       createProfileDTO.hasAccess();
       const profile: ProfileEntity = createProfileDTO.profile;
       await this.profileRepository.addProfile(profile.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {message: "Profile created successfully"});
+      return AppResult.success({message: "Profile created successfully"});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async fetchAllProfiles(fetchAllProfilesDTO: FetchAllProfilesDTO): Promise<HttpResp> {
+  async fetchAllProfiles(fetchAllProfilesDTO: FetchAllProfilesDTO): Promise<AppResult> {
     try {
       const {paginationOptions} = fetchAllProfilesDTO;
       fetchAllProfilesDTO.hasAccess();
       const response: PaginatedData<ProfileEntity> = await this.profileRepository.fetchAllProfiles(paginationOptions);
-      return HttpResp.create(HttpStatusCode.OK, {data: response.getPaginatedData()})
+      return AppResult.success({data: response.getPaginatedData()});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async updateProfile(updateProfileDTO: UpdateProfileDTO): Promise<HttpResp> {
+  async updateProfile(updateProfileDTO: UpdateProfileDTO): Promise<AppResult> {
     try {
       updateProfileDTO.hasAccess();
       const profile: ProfileEntity = updateProfileDTO.profile;
       await this.profileRepository.update(profile.toObject());
-      return HttpResp.create(HttpStatusCode.OK, {message: "Profile updated successfully"});
+      return AppResult.success({message: "Profile updated successfully"});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async fetchProfileById(fetchProfileByIdDTO: FetchProfileByIdDTO): Promise<HttpResp> {
+  async fetchProfileById(fetchProfileByIdDTO: FetchProfileByIdDTO): Promise<AppResult> {
     try {
       const {profileId} = fetchProfileByIdDTO;
       fetchProfileByIdDTO.hasAccess();
       const response: ProfileEntity = await this.profileRepository.fetchById(profileId);
-      return HttpResp.create(HttpStatusCode.OK, {data: response});
+      return AppResult.success({data: response});
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message});
+      return AppResult.fail(err.message);
     }
   }
 
-  async removeProfile(removeProfileDTO: RemoveProfileDTO): Promise<HttpResp> {
+  async removeProfile(removeProfileDTO: RemoveProfileDTO): Promise<AppResult> {
     try {
       removeProfileDTO.hasAccess();
       await this.profileRepository.remove(removeProfileDTO.profileId);
-      return HttpResp.create(HttpStatusCode.OK, {message: "Profile deleted Successfully"})
+      return AppResult.success({message: "Profile deleted Successfully"})
     } catch (err) {
-      return HttpResp.create(HttpStatusCode.ERROR, {status: "error", message: err.message})
+      return AppResult.fail(err.message);
     }
   }
 }

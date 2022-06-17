@@ -30,7 +30,7 @@ class UserService {
       const {paginationOptions} = fetchAllUsersDTO;
       fetchAllUsersDTO.hasAccess();
       const response: PaginatedData<UserEntity> = await this.userRepository.fetchAllUsers(paginationOptions);
-      return AppResult.success({data: response.getPaginatedData()})
+      return AppResult.success({data: response.getPaginatedData()});
     } catch (err) {
       return AppResult.fail(err.message);
     }
@@ -64,7 +64,7 @@ class UserService {
       await this.userRepository.remove(removeUserDTO.userId);
       return AppResult.success({message: "User deleted Successfully"})
     } catch (err) {
-      return AppResult.fail(err.message)
+      return AppResult.fail(err.message);
     }
   }
 }

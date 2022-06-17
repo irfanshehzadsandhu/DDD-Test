@@ -1,5 +1,4 @@
 interface BaseDTOInterface {
-
   hasAccess(): any;
 }
 
